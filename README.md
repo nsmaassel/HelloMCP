@@ -15,8 +15,3 @@ Each folder will contain a sample implementation and deployment instructions.
 ## Project Roadmap
 
 For a comprehensive development plan, milestones, and learning objectives, see the [Project Roadmap](ROADMAP.md) document.
-
-## Next Steps
-
-- Initialize this project as a GitHub repository
-- Use the GitHub MCP tool and coding agent to create and assign issues for each server type
