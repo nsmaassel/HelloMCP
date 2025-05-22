@@ -1,0 +1,40 @@
+name: "Copilot Setup Steps"
+
+on: workflow_dispatch
+
+jobs:
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Node.js dependencies (if present)
+        run: |
+          if [ -f package-lock.json ]; then npm ci; fi
+
+      - name: Install Python dependencies (if present)
+        run: |
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Restore .NET dependencies (if present)
+        run: |
+          if [ -f "dotnet-mcp/dotnet-mcp.csproj" ]; then dotnet restore dotnet-mcp/dotnet-mcp.csproj; fi
