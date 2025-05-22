@@ -1,0 +1,25 @@
+# Ignore build and test output
+**/bin/
+**/obj/
+**/out/
+
+# Ignore development settings
+**/*.Development.json
+
+# Ignore git directory
+**/.git/
+
+# Ignore test project
+McpServer.Tests/
+
+# Ignore files in the root directory
+Dockerfile
+.dockerignore
+.gitignore
+
+# Ignore IDE files
+**/.vs/
+**/.vscode/
+**/*.user
+**/*.userosscache
+**/*.suo
