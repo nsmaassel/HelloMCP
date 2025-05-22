@@ -11,3 +11,7 @@ This project demonstrates multiple ways to create and deploy Model Context Proto
 - `dotnet-mcp/` — MCP server using .NET SDK and Semantic Kernel
 
 Each folder will contain a sample implementation and deployment instructions.
+
+## Project Roadmap
+
+For a comprehensive development plan, milestones, and learning objectives, see the [Project Roadmap](ROADMAP.md) document.
