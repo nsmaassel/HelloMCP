@@ -11,8 +11,3 @@ This project demonstrates multiple ways to create and deploy Model Context Proto
 - `dotnet-mcp/` — MCP server using .NET SDK and Semantic Kernel
 
 Each folder will contain a sample implementation and deployment instructions.
-
-## Next Steps
-
-- Initialize this project as a GitHub repository
-- Use the GitHub MCP tool and coding agent to create and assign issues for each server type
