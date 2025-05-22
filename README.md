@@ -12,6 +12,10 @@ This project demonstrates multiple ways to create and deploy Model Context Proto
 
 Each folder will contain a sample implementation and deployment instructions.
 
+## Project Roadmap
+
+For a comprehensive development plan, milestones, and learning objectives, see the [Project Roadmap](ROADMAP.md) document.
+
 ## Next Steps
 
 - Initialize this project as a GitHub repository
