@@ -3,6 +3,7 @@ using System.Text.Json;
 using AzureFunctionsMcp.Functions;
 using AzureFunctionsMcp.Models;
 using AzureFunctionsMcp.Services;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -90,30 +91,5 @@ public class SessionFunctionsTests
         // Assert
         Assert.Equal(HttpStatusCode.OK, result.StatusCode);
         _sessionServiceMock.Verify(x => x.CloseSession(testSessionId), Times.Once);
-    }
-}
-
-// Mock class to facilitate testing
-public class HttpHeadersCollection : HttpHeaders
-{
-    private readonly Dictionary<string, IEnumerable<string>> _headers = new();
-
-    public override void Add(string key, string value)
-    {
-        if (_headers.ContainsKey(key))
-        {
-            var values = _headers[key].ToList();
-            values.Add(value);
-            _headers[key] = values;
-        }
-        else
-        {
-            _headers.Add(key, new[] { value });
-        }
-    }
-
-    public override IEnumerable<(string Key, IEnumerable<string> Value)> GetHeaders()
-    {
-        return _headers.Select(h => (h.Key, h.Value));
     }
 }

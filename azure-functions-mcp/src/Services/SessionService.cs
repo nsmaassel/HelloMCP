@@ -6,9 +6,9 @@ namespace AzureFunctionsMcp.Services;
 public class SessionService
 {
     private readonly ConcurrentDictionary<string, SessionInfo> _sessions = new();
-    private readonly ILogger<SessionService> _logger;
+    private readonly ILogger<SessionService>? _logger;
 
-    public SessionService(ILogger<SessionService> logger)
+    public SessionService(ILogger<SessionService>? logger = null)
     {
         _logger = logger;
     }
@@ -24,7 +24,7 @@ public class SessionService
         };
 
         _sessions.TryAdd(sessionId, sessionInfo);
-        _logger.LogInformation("Created session {SessionId}", sessionId);
+        _logger?.LogInformation("Created session {SessionId}", sessionId);
         return sessionId;
     }
 
@@ -35,7 +35,7 @@ public class SessionService
             // Check if session is expired (30 minutes)
             if (DateTimeOffset.UtcNow - session.CreatedAt > TimeSpan.FromMinutes(30))
             {
-                _logger.LogInformation("Session {SessionId} has expired", sessionId);
+                _logger?.LogInformation("Session {SessionId} has expired", sessionId);
                 _sessions.TryRemove(sessionId, out _);
                 return false;
             }
@@ -53,7 +53,7 @@ public class SessionService
         var result = _sessions.TryRemove(sessionId, out _);
         if (result)
         {
-            _logger.LogInformation("Closed session {SessionId}", sessionId);
+            _logger?.LogInformation("Closed session {SessionId}", sessionId);
         }
         return result;
     }
