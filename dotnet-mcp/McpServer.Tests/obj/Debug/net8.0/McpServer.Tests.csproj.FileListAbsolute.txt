@@ -439,9 +439,9 @@
 /home/runner/work/HelloMCP/HelloMCP/dotnet-mcp/McpServer.Tests/bin/Debug/net8.0/runtimes/win/lib/net8.0/System.Diagnostics.EventLog.dll
 /home/runner/work/HelloMCP/HelloMCP/dotnet-mcp/McpServer.Tests/bin/Debug/net8.0/McpServer.dll
 /home/runner/work/HelloMCP/HelloMCP/dotnet-mcp/McpServer.Tests/bin/Debug/net8.0/McpServer.pdb
-/home/runner/work/HelloMCP/HelloMCP/dotnet-mcp/McpServer.Tests/obj/Debug/net8.0/McpServer.Tests.csproj.CopyComplete
 /home/runner/work/HelloMCP/HelloMCP/dotnet-mcp/McpServer.Tests/obj/Debug/net8.0/McpServer.Tests.dll
 /home/runner/work/HelloMCP/HelloMCP/dotnet-mcp/McpServer.Tests/obj/Debug/net8.0/refint/McpServer.Tests.dll
 /home/runner/work/HelloMCP/HelloMCP/dotnet-mcp/McpServer.Tests/obj/Debug/net8.0/McpServer.Tests.pdb
 /home/runner/work/HelloMCP/HelloMCP/dotnet-mcp/McpServer.Tests/obj/Debug/net8.0/McpServer.Tests.genruntimeconfig.cache
 /home/runner/work/HelloMCP/HelloMCP/dotnet-mcp/McpServer.Tests/obj/Debug/net8.0/ref/McpServer.Tests.dll
+/home/runner/work/HelloMCP/HelloMCP/dotnet-mcp/McpServer.Tests/obj/Debug/net8.0/McpServe.A6370873.Up2Date

@@ -1949,7 +1949,10 @@
           "Swashbuckle.AspNetCore": "8.1.1"
         },
         "runtime": {
-          "McpServer.dll": {}
+          "McpServer.dll": {
+            "assemblyVersion": "1.0.0",
+            "fileVersion": "1.0.0.0"
+          }
         },
         "compile": {
           "McpServer.dll": {}
