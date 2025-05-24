@@ -11,9 +11,9 @@ namespace AzureFunctionsMcp.Functions;
 public class TextCompletionFunctions
 {
     private readonly ILogger _logger;
-    private readonly SessionService _sessionService;
+    private readonly ISessionService _sessionService;
 
-    public TextCompletionFunctions(ILoggerFactory loggerFactory, SessionService sessionService)
+    public TextCompletionFunctions(ILoggerFactory loggerFactory, ISessionService sessionService)
     {
         _logger = loggerFactory.CreateLogger<TextCompletionFunctions>();
         _sessionService = sessionService;

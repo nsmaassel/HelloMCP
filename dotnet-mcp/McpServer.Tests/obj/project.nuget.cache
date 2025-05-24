@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "JmBEyyQeDiLiux5/eAWC1Et4ZHRT7FsJnF4NNhNq9EN1UH/S0i/p/3I2mqMVFVXtYAVYvWgNl10uAotTtQ+M0g==",
+  "dgSpecHash": "p64nWi4CTZM=",
   "success": true,
   "projectFilePath": "/home/runner/work/HelloMCP/HelloMCP/dotnet-mcp/McpServer.Tests/McpServer.Tests.csproj",
   "expectedPackageFiles": [

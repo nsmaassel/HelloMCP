@@ -34,9 +34,9 @@
 /home/runner/work/HelloMCP/HelloMCP/dotnet-mcp/McpServer/obj/Debug/net8.0/staticwebassets/msbuild.buildTransitive.McpServer.props
 /home/runner/work/HelloMCP/HelloMCP/dotnet-mcp/McpServer/obj/Debug/net8.0/staticwebassets.pack.json
 /home/runner/work/HelloMCP/HelloMCP/dotnet-mcp/McpServer/obj/Debug/net8.0/scopedcss/bundle/McpServer.styles.css
-/home/runner/work/HelloMCP/HelloMCP/dotnet-mcp/McpServer/obj/Debug/net8.0/McpServer.csproj.CopyComplete
 /home/runner/work/HelloMCP/HelloMCP/dotnet-mcp/McpServer/obj/Debug/net8.0/McpServer.dll
 /home/runner/work/HelloMCP/HelloMCP/dotnet-mcp/McpServer/obj/Debug/net8.0/refint/McpServer.dll
 /home/runner/work/HelloMCP/HelloMCP/dotnet-mcp/McpServer/obj/Debug/net8.0/McpServer.pdb
 /home/runner/work/HelloMCP/HelloMCP/dotnet-mcp/McpServer/obj/Debug/net8.0/McpServer.genruntimeconfig.cache
 /home/runner/work/HelloMCP/HelloMCP/dotnet-mcp/McpServer/obj/Debug/net8.0/ref/McpServer.dll
+/home/runner/work/HelloMCP/HelloMCP/dotnet-mcp/McpServer/obj/Debug/net8.0/McpServer.csproj.Up2Date

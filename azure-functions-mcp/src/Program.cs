@@ -10,7 +10,7 @@ var host = new HostBuilder()
         // Configure worker options
     }))
     .ConfigureServices(services => {
-        services.AddSingleton<SessionService>();
+        services.AddSingleton<ISessionService, SessionService>();
         services.Configure<JsonSerializerOptions>(options => {
             options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
             options.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
