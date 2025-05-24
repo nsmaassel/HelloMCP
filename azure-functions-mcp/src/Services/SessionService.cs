@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace AzureFunctionsMcp.Services;
 
-public class SessionService
+public class SessionService : ISessionService
 {
     private readonly ConcurrentDictionary<string, SessionInfo> _sessions = new();
     private readonly ILogger<SessionService>? _logger;
