@@ -1,0 +1,33 @@
+# Node.js dependencies
+node_modules
+npm-debug.log
+
+# Development files
+.git
+.github
+.vscode
+.eslintrc
+.prettierrc
+*.md
+!README.md
+
+# Test files
+tests
+jest.config.js
+coverage
+
+# Logs
+logs
+*.log
+
+# Environment variables
+.env
+.env.*
+
+# Docker files
+Dockerfile
+.dockerignore
+
+# OS specific files
+.DS_Store
+Thumbs.db
