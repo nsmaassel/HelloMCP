@@ -1,0 +1,21 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Attach to .NET Functions",
+      "type": "coreclr",
+      "request": "attach",
+      "processId": "${command:azureFunctions.pickProcess}"
+    },
+    {
+      "name": "Debug Azure Functions",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "func: host start",
+      "program": "${workspaceFolder}/src/bin/Debug/net8.0/azure-functions-mcp.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src",
+      "console": "internalConsole"
+    }
+  ]
+}
