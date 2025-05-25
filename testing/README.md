@@ -41,6 +41,11 @@ These tests ensure the server is functioning properly in production:
 - Protocol compliance tests
 - Authentication tests
 
+**Current Limitations**: The Azure Functions MCP Server tests have some mock setup issues with extension methods like `HttpRequestDataExtensions.ReadFromJsonAsync` and `HttpResponseDataExtensions.WriteAsJsonAsync` which cannot be directly mocked using Moq. This is a known issue that will be addressed in a future update by:
+1. Creating wrapper interfaces for these extension methods
+2. Using custom test helpers instead of directly mocking extension methods
+3. Using actual request/response objects where possible instead of mocks
+
 ### Docker MCP Server (Future)
 - Integration tests for container functionality
 - Load testing
@@ -71,9 +76,29 @@ dotnet test
 
 3. **Mocking**: Use Moq for mocking dependencies
 
+### Mock Implementation Rationale
+
+Mock implementations are used in specific scenarios for the following reasons:
+
+1. **Isolation of Components**: Mocks allow testing of individual components without dependencies on external services or infrastructure.
+   - Example: The `ISessionService` interface enables testing controllers/functions without requiring a real session backend.
+
+2. **Testing Edge Cases**: Mocks allow simulation of error conditions and edge cases that would be difficult to reproduce with real implementations.
+   - Example: Testing session validation failures or authentication errors.
+
+3. **Faster Test Execution**: Tests with mocks run faster as they don't require external resources or services.
+
+**Alternatives Considered**:
+- **In-memory implementations**: For some components like `SessionService`, we could use in-memory implementations instead of mocks. However, mocks provide more control over behavior during tests.
+- **Integration tests with real dependencies**: We use these where appropriate (see the EndToEndIntegrationTests), but they're not suitable for all test scenarios.
+- **Test containers**: For future improvements, we could use Docker test containers for more realistic integration tests.
+
 ## Continuous Integration
 
-Tests are automatically run as part of the CI/CD pipeline on GitHub Actions.
+Tests are automatically run as part of the CI/CD pipeline on GitHub Actions. The workflow is defined in `.github/workflows/run-tests.yml` and runs:
+1. On pull requests to main branch
+2. On pushes to main branch
+3. Captures and uploads test results as artifacts
 
 ## Future Improvements
 

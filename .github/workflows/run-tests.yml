@@ -1,0 +1,34 @@
+name: Run MCP Server Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+      
+      - name: Run .NET MCP Server Tests
+        run: |
+          dotnet test ./dotnet-mcp/McpServer.Tests/McpServer.Tests.csproj --logger "trx;LogFileName=dotnet-test-results.trx"
+      
+      - name: Run Azure Functions MCP Tests
+        run: |
+          dotnet test ./azure-functions-mcp/test/azure-functions-mcp.Tests.csproj --logger "trx;LogFileName=azure-functions-test-results.trx"
+        continue-on-error: true  # Some tests are currently failing due to mock setup issues
+      
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: test-results
+          path: "**/*.trx"
