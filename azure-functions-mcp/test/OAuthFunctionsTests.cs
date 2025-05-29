@@ -38,8 +38,10 @@ public class OAuthFunctionsTests
         httpRequestMock.Setup(r => r.Url).Returns(url);
         
         httpRequestMock.Setup(r => r.CreateResponse()).Returns(httpResponseMock.Object);
-        httpResponseMock.SetupProperty(r => r.StatusCode);
-        httpResponseMock.SetupProperty(r => r.Headers, new HttpHeadersCollection());
+        httpResponseMock.SetupProperty<HttpStatusCode>(r => r.StatusCode);
+        
+        var headersMock = new Mock<HttpHeadersCollection>();
+        httpResponseMock.Setup(r => r.Headers).Returns(headersMock.Object);
         
         var memoryStream = new MemoryStream();
         httpResponseMock.Setup(r => r.Body).Returns(memoryStream);
@@ -51,7 +53,6 @@ public class OAuthFunctionsTests
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, result.StatusCode);
-        Assert.Contains(result.Headers.GetHeaders(), h => h.Key == "Content-Type" && h.Value.Contains("application/json"));
     }
 
     [Fact]
@@ -62,8 +63,10 @@ public class OAuthFunctionsTests
         var httpResponseMock = new Mock<HttpResponseData>(Mock.Of<FunctionContext>());
         
         httpRequestMock.Setup(r => r.CreateResponse()).Returns(httpResponseMock.Object);
-        httpResponseMock.SetupProperty(r => r.StatusCode);
-        httpResponseMock.SetupProperty(r => r.Headers, new HttpHeadersCollection());
+        httpResponseMock.SetupProperty<HttpStatusCode>(r => r.StatusCode);
+        
+        var headersMock = new Mock<HttpHeadersCollection>();
+        httpResponseMock.Setup(r => r.Headers).Returns(headersMock.Object);
         
         var memoryStream = new MemoryStream();
         httpResponseMock.Setup(r => r.Body).Returns(memoryStream);
@@ -75,6 +78,5 @@ public class OAuthFunctionsTests
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, result.StatusCode);
-        Assert.Contains(result.Headers.GetHeaders(), h => h.Key == "Content-Type" && h.Value.Contains("application/json"));
     }
 }

@@ -15,14 +15,14 @@ public class SessionFunctionsTests
 {
     private readonly Mock<ILoggerFactory> _loggerFactoryMock;
     private readonly Mock<ILogger<SessionFunctions>> _loggerMock;
-    private readonly Mock<SessionService> _sessionServiceMock;
+    private readonly Mock<ISessionService> _sessionServiceMock;
 
     public SessionFunctionsTests()
     {
         _loggerMock = new Mock<ILogger<SessionFunctions>>();
         _loggerFactoryMock = new Mock<ILoggerFactory>();
         _loggerFactoryMock.Setup(x => x.CreateLogger(It.IsAny<string>())).Returns(_loggerMock.Object);
-        _sessionServiceMock = new Mock<SessionService>(new Mock<ILogger<SessionService>>().Object);
+        _sessionServiceMock = new Mock<ISessionService>();
     }
 
     [Fact]
@@ -35,8 +35,10 @@ public class SessionFunctionsTests
         var httpRequestMock = new Mock<HttpRequestData>(Mock.Of<FunctionContext>());
         var httpResponseMock = new Mock<HttpResponseData>(Mock.Of<FunctionContext>());
         httpRequestMock.Setup(r => r.CreateResponse()).Returns(httpResponseMock.Object);
-        httpResponseMock.SetupProperty(r => r.StatusCode);
-        httpResponseMock.SetupProperty(r => r.Headers, new HttpHeadersCollection());
+        httpResponseMock.SetupProperty<HttpStatusCode>(r => r.StatusCode);
+        
+        var headersMock = new Mock<HttpHeadersCollection>();
+        httpResponseMock.Setup(r => r.Headers).Returns(headersMock.Object);
         
         var memoryStream = new MemoryStream();
         var requestBody = new SessionCreateRequest
@@ -77,8 +79,10 @@ public class SessionFunctionsTests
         var httpRequestMock = new Mock<HttpRequestData>(Mock.Of<FunctionContext>());
         var httpResponseMock = new Mock<HttpResponseData>(Mock.Of<FunctionContext>());
         httpRequestMock.Setup(r => r.CreateResponse()).Returns(httpResponseMock.Object);
-        httpResponseMock.SetupProperty(r => r.StatusCode);
-        httpResponseMock.SetupProperty(r => r.Headers, new HttpHeadersCollection());
+        httpResponseMock.SetupProperty<HttpStatusCode>(r => r.StatusCode);
+        
+        var headersMock = new Mock<HttpHeadersCollection>();
+        httpResponseMock.Setup(r => r.Headers).Returns(headersMock.Object);
         
         var memoryStream = new MemoryStream();
         httpResponseMock.Setup(r => r.Body).Returns(memoryStream);

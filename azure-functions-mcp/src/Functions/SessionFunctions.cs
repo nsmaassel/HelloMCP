@@ -10,9 +10,9 @@ namespace AzureFunctionsMcp.Functions;
 public class SessionFunctions
 {
     private readonly ILogger _logger;
-    private readonly SessionService _sessionService;
+    private readonly ISessionService _sessionService;
 
-    public SessionFunctions(ILoggerFactory loggerFactory, SessionService sessionService)
+    public SessionFunctions(ILoggerFactory loggerFactory, ISessionService sessionService)
     {
         _logger = loggerFactory.CreateLogger<SessionFunctions>();
         _sessionService = sessionService;
