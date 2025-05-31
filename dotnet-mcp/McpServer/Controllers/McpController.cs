@@ -54,40 +54,66 @@ public class McpController : ControllerBase
     
     // Text completion endpoint - Streamable HTTP
     [HttpPost("text/completions")]
-    public async Task<IActionResult> GetTextCompletions([FromBody] TextCompletionRequest request)
+    public IActionResult GetTextCompletions([FromBody] TextCompletionRequest request)
     {
         try
         {
-            _logger.LogInformation("Text completion requested for session {SessionId}", request.SessionId);
-            
+            _logger.LogInformation("Text completion/stat analysis requested for session {SessionId}", request.SessionId);
+
             if (!_sessionService.TryGetSession(request.SessionId, out var sessionInfo))
             {
                 _logger.LogWarning("Invalid session ID: {SessionId}", request.SessionId);
                 return BadRequest(CreateErrorResponse(request.Id, "invalid_session", "Invalid or expired session ID"));
             }
-            
-            // Set the response content type
-            Response.ContentType = "application/x-ndjson";
-            
-            // Send the response in chunks
-            var exampleResponses = GenerateDemoResponses(request);
-            
-            foreach (var responsePart in exampleResponses)
+
+            // If stats are present, do deterministic stat analysis
+            if (request.Inputs?.Stats != null)
             {
-                var json = JsonSerializer.Serialize(responsePart) + "\n";
-                var bytes = Encoding.UTF8.GetBytes(json);
-                await Response.Body.WriteAsync(bytes, 0, bytes.Length);
-                await Response.Body.FlushAsync();
-                
-                // Add a small delay to simulate streaming
-                await Task.Delay(100);
+                var result = new Dictionary<string, string>();
+                var p1 = request.Inputs.Stats.Player1;
+                var p2 = request.Inputs.Stats.Player2;
+                foreach (var stat in p1.Keys)
+                {
+                    if (p2.ContainsKey(stat))
+                    {
+                        if (p1[stat] > p2[stat]) result[stat] = "player1";
+                        else if (p1[stat] < p2[stat]) result[stat] = "player2";
+                        else result[stat] = "tie";
+                    }
+                }
+                // Save to session history
+                sessionInfo.AnalysisHistory.Add(new Dictionary<string, string>(result));
+                var response = new
+                {
+                    id = request.Id,
+                    type = "stat-analysis-response",
+                    result,
+                    history = sessionInfo.AnalysisHistory
+                };
+                return Ok(response);
             }
-            
-            return new EmptyResult();
+            // If prompt is present, do text completion (demo/dummy response)
+            else if (!string.IsNullOrWhiteSpace(request.Inputs?.Prompt))
+            {
+                // Demo: echo the prompt with a canned completion
+                var completion = $"{request.Inputs.Prompt} [COMPLETION]";
+                var response = new
+                {
+                    id = request.Id,
+                    type = "text-completion-response",
+                    result = new { text = completion },
+                    usage = new { prompt_tokens = request.Inputs.Prompt.Length, completion_tokens = 1, total_tokens = request.Inputs.Prompt.Length + 1 }
+                };
+                return Ok(response);
+            }
+            else
+            {
+                return BadRequest(CreateErrorResponse(request.Id, "invalid_request", "Missing stats or prompt in request."));
+            }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error processing text completion");
+            _logger.LogError(ex, "Error processing text completion/stat analysis");
             return StatusCode(500, CreateErrorResponse(request.Id, "internal_error", "An unexpected error occurred"));
         }
     }
@@ -98,42 +124,101 @@ public class McpController : ControllerBase
     {
         try
         {
-            _logger.LogInformation("SSE text completion requested for session {SessionId}", request.SessionId);
-            
+            _logger.LogInformation("SSE text completion/stat analysis requested for session {SessionId}", request.SessionId);
+
             if (!_sessionService.TryGetSession(request.SessionId, out var sessionInfo))
             {
                 _logger.LogWarning("Invalid session ID: {SessionId}", request.SessionId);
                 return BadRequest(CreateErrorResponse(request.Id, "invalid_session", "Invalid or expired session ID"));
             }
-            
+
             // Set up SSE headers
             Response.Headers["Content-Type"] = "text/event-stream";
             Response.Headers["Cache-Control"] = "no-cache";
             Response.Headers["Connection"] = "keep-alive";
-            
-            // Return StreamingResponse
-            return new StreamingResponse(async stream =>
+
+            // If stats are present, stream stat analysis
+            if (request.Inputs?.Stats != null)
             {
-                var writer = new StreamWriter(stream);
-                var exampleResponses = GenerateDemoResponses(request);
-                
-                foreach (var responsePart in exampleResponses)
+                var result = new Dictionary<string, string>();
+                var p1 = request.Inputs.Stats.Player1;
+                var p2 = request.Inputs.Stats.Player2;
+                foreach (var stat in p1.Keys)
                 {
-                    var json = JsonSerializer.Serialize(responsePart);
-                    await writer.WriteAsync($"data: {json}\n\n");
-                    await writer.FlushAsync();
-                    
-                    // Add a small delay to simulate streaming
-                    await Task.Delay(100);
+                    if (p2.ContainsKey(stat))
+                    {
+                        if (p1[stat] > p2[stat]) result[stat] = "player1";
+                        else if (p1[stat] < p2[stat]) result[stat] = "player2";
+                        else result[stat] = "tie";
+                    }
                 }
-                
-                await writer.WriteAsync("data: [DONE]\n\n");
-                await writer.FlushAsync();
-            });
+                // Save to session history
+                sessionInfo.AnalysisHistory.Add(new Dictionary<string, string>(result));
+                return new StreamingResponse(async stream =>
+                {
+                    var writer = new StreamWriter(stream);
+                    // Stream each stat as a separate SSE event
+                    foreach (var stat in result.Keys)
+                    {
+                        var chunk = new
+                        {
+                            id = request.Id,
+                            type = "stat-analysis-stream-response",
+                            stat,
+                            winner = result[stat]
+                        };
+                        var json = JsonSerializer.Serialize(chunk);
+                        await writer.WriteAsync($"data: {json}\n\n");
+                        await writer.FlushAsync();
+                        await Task.Delay(100); // Simulate streaming
+                    }
+                    // Final event with full history
+                    var final = new
+                    {
+                        id = request.Id,
+                        type = "stat-analysis-stream-history",
+                        history = sessionInfo.AnalysisHistory
+                    };
+                    var finalJson = JsonSerializer.Serialize(final);
+                    await writer.WriteAsync($"data: {finalJson}\n\n");
+                    await writer.WriteAsync("data: [DONE]\n\n");
+                    await writer.FlushAsync();
+                });
+            }
+            // If prompt is present, stream a text completion (demo)
+            else if (!string.IsNullOrWhiteSpace(request.Inputs?.Prompt))
+            {
+                var prompt = request.Inputs.Prompt;
+                return new StreamingResponse(async stream =>
+                {
+                    var writer = new StreamWriter(stream);
+                    // Simulate streaming the completion one word at a time
+                    var words = (prompt + " [COMPLETION]").Split(' ');
+                    foreach (var word in words)
+                    {
+                        var chunk = new
+                        {
+                            id = request.Id,
+                            type = "text-completion-stream-response",
+                            text = word
+                        };
+                        var json = JsonSerializer.Serialize(chunk);
+                        await writer.WriteAsync($"data: {json}\n\n");
+                        await writer.FlushAsync();
+                        await Task.Delay(100); // Simulate streaming
+                    }
+                    await writer.WriteAsync("data: [DONE]\n\n");
+                    await writer.FlushAsync();
+                });
+            }
+            else
+            {
+                return BadRequest(CreateErrorResponse(request.Id, "invalid_request", "Missing stats or prompt in request."));
+            }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error processing SSE text completion");
+            _logger.LogError(ex, "Error processing SSE text completion/stat analysis");
             return StatusCode(500, CreateErrorResponse(request.Id, "internal_error", "An unexpected error occurred"));
         }
     }
@@ -183,48 +268,7 @@ public class McpController : ControllerBase
         };
     }
     
-    private static IEnumerable<TextCompletionStreamResponse> GenerateDemoResponses(TextCompletionRequest request)
-    {
-        // Generate some simulated responses for demonstration purposes
-        var lorem = "This is a demonstration of the Model Context Protocol server implemented in .NET. " +
-                   "The server supports both modern Streamable HTTP and legacy HTTP+SSE transport options. " +
-                   "In a real implementation, this would connect to an AI model to generate responses based on the provided prompt.";
-        
-        var words = lorem.Split(' ');
-        var responses = new List<TextCompletionStreamResponse>();
-        
-        // Initial chunks with content
-        for (var i = 0; i < words.Length; i++)
-        {
-            responses.Add(new TextCompletionStreamResponse
-            {
-                Id = request.Id,
-                Delta = new TextCompletionDelta
-                {
-                    Text = words[i] + " "
-                }
-            });
-        }
-        
-        // Final chunk with finish reason and usage
-        responses.Add(new TextCompletionStreamResponse
-        {
-            Id = request.Id,
-            Delta = new TextCompletionDelta
-            {
-                Text = "",
-                FinishReason = "stop"
-            },
-            Usage = new TextCompletionUsage
-            {
-                PromptTokens = request.Inputs.Prompt.Length / 4, // Very rough approximation
-                CompletionTokens = lorem.Length / 4,
-                TotalTokens = (request.Inputs.Prompt.Length + lorem.Length) / 4
-            }
-        });
-        
-        return responses;
-    }
+    // The old GenerateDemoResponses method is now obsolete and not used. It is safe to remove it.
 }
 
 // Custom result type for SSE streaming

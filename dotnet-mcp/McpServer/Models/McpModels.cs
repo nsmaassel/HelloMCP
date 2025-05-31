@@ -66,14 +66,28 @@ public class TextCompletionRequest : McpRequest
 
 public class TextCompletionInputs
 {
+    // For deterministic analysis, accept a stats object
+    [JsonPropertyName("stats")]
+    public MatchStats? Stats { get; set; }
+
+    // For text completions, accept a prompt and related parameters
     [JsonPropertyName("prompt")]
-    public string Prompt { get; set; } = string.Empty;
-    
+    public string? Prompt { get; set; }
+
     [JsonPropertyName("temperature")]
-    public double? Temperature { get; set; } = 0.7;
-    
+    public double? Temperature { get; set; }
+
     [JsonPropertyName("max_tokens")]
-    public int? MaxTokens { get; set; } = 1000;
+    public int? MaxTokens { get; set; }
+}
+
+public class MatchStats
+{
+    [JsonPropertyName("player1")]
+    public Dictionary<string, double> Player1 { get; set; } = new();
+
+    [JsonPropertyName("player2")]
+    public Dictionary<string, double> Player2 { get; set; } = new();
 }
 
 // Text Completion response

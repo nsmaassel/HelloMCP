@@ -61,45 +61,67 @@ The MCP server implements the following key endpoints:
    - `POST /v1/session` - Creates a new session
    - `DELETE /v1/session/{sessionId}` - Closes an existing session
 
-3. **Text Completion**
-   - `POST /v1/text/completions` - Modern Streamable HTTP endpoint
-   - `POST /v1/text/completions/stream` - Legacy HTTP+SSE endpoint
 
-### Example Request Flow
+3. **Text Completion & Analysis**
+   - `POST /v1/text/completions` - Main endpoint for both text completions and deterministic/statistical analysis
+   - `POST /v1/text/completions/stream` - Streaming endpoint (SSE) for both modes
 
-1. Create a Session:
-   ```
-   POST /v1/session
-   {
-     "id": "request-123",
-     "version": "0.1",
-     "type": "session-create-request",
-     "attributes": {
-       "access_token": "your_token_here"
-     }
-   }
-   ```
+## Example Request Flows
 
-2. Make a Text Completion Request:
-   ```
-   POST /v1/text/completions
-   {
-     "id": "request-456",
-     "version": "0.1",
-     "type": "text-completion-request",
-     "session_id": "session_id_from_step_1",
-     "inputs": {
-       "prompt": "The capital of France is",
-       "temperature": 0.7,
-       "max_tokens": 100
-     }
-   }
-   ```
+### 1. Create a Session
+```json
+POST /v1/session
+{
+  "id": "request-123",
+  "version": "0.1",
+  "type": "session-create-request",
+  "attributes": {
+    "access_token": "your_token_here"
+  }
+}
+```
 
-3. Close the Session:
-   ```
-   DELETE /v1/session/{session_id_from_step_1}
-   ```
+### 2a. Text Completion Request (Prompt)
+```json
+POST /v1/text/completions
+{
+  "id": "request-456",
+  "version": "0.1",
+  "type": "text-completion-request",
+  "session_id": "session_id_from_step_1",
+  "inputs": {
+    "prompt": "The capital of France is",
+    "temperature": 0.7,
+    "max_tokens": 100
+  }
+}
+```
+
+### 2b. Deterministic Stat Analysis Request (Tennis Example)
+```json
+POST /v1/text/completions
+{
+  "id": "request-789",
+  "version": "0.1",
+  "type": "text-completion-request",
+  "session_id": "session_id_from_step_1",
+  "inputs": {
+    "stats": {
+      "player1": { "aces": 5, "points": 20 },
+      "player2": { "aces": 3, "points": 25 }
+    }
+  }
+}
+```
+
+### 2c. Streaming (SSE) Request
+Use the same request body as above, but POST to `/v1/text/completions/stream`.
+
+### 3. Close the Session
+```json
+DELETE /v1/session/{session_id_from_step_1}
+```
+
 
 ## Deployment
 

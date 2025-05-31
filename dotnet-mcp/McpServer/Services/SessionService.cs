@@ -34,4 +34,7 @@ public class SessionInfo
     public string Id { get; set; } = string.Empty;
     public string? AccessToken { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
+
+    // Store a history of analysis results for this session
+    public List<Dictionary<string, string>> AnalysisHistory { get; set; } = new();
 }
