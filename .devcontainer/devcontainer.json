@@ -1,0 +1,47 @@
+{
+  "name": "HelloMCP .NET Development",
+  "image": "mcr.microsoft.com/devcontainers/dotnet:8.0",
+  "features": {
+    "ghcr.io/devcontainers/features/azure-cli:1": {},
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "18"
+    }
+  },
+  "postCreateCommand": "cd dotnet-mcp && dotnet restore",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-dotnettools.csharp",
+        "ms-dotnettools.vscode-dotnet-runtime",
+        "ms-azuretools.vscode-azurefunctions",
+        "ms-vscode.vscode-json",
+        "bradlc.vscode-tailwindcss",
+        "esbenp.prettier-vscode"
+      ],
+      "settings": {
+        "dotnet.completion.showCompletionItemsFromUnimportedNamespaces": true,
+        "omnisharp.enableRoslynAnalyzers": true
+      }
+    }
+  },
+  "forwardPorts": [5090, 7071, 3000],
+  "portsAttributes": {
+    "5090": {
+      "label": "MCP Server",
+      "protocol": "http"
+    },
+    "7071": {
+      "label": "Azure Functions",
+      "protocol": "http"
+    },
+    "3000": {
+      "label": "Frontend Dev Server",
+      "protocol": "http"
+    }
+  },
+  "workspaceFolder": "/workspaces/HelloMCP",
+  "mounts": [
+    "source=dotnet-packages,target=/home/vscode/.nuget,type=volume"
+  ]
+}
