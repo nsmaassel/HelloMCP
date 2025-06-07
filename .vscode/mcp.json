@@ -1,0 +1,7 @@
+{
+    "servers": {
+        "my-dotnot-mcp-server": {
+            "url": "http://localhost:5090/v1"
+        }
+    }
+}
