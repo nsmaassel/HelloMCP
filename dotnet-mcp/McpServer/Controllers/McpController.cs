@@ -18,6 +18,25 @@ public class McpController : ControllerBase
         _sessionService = sessionService;
         _logger = logger;
     }
+
+    // MCP initialize endpoint for protocol compatibility
+    [HttpPost("initialize")]
+    public IActionResult Initialize([FromBody] object request)
+    {
+        // Return a minimal MCP-compliant response
+        var response = new
+        {
+            id = Guid.NewGuid().ToString(),
+            object_type = "mcp-initialize-response",
+            server = new {
+                name = ".NET MCP Example Server",
+                version = "1.0.0",
+                description = "A .NET MCP server supporting stat analysis and text completions."
+            },
+            capabilities = new[] { "text-completions", "stat-analysis", "streaming" }
+        };
+        return Ok(response);
+    }
     
     // Session creation endpoint
     [HttpPost("session")]
