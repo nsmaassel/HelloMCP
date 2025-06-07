@@ -1,5 +1,9 @@
 # .NET Model Context Protocol (MCP) Server
 
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/nsmaassel/HelloMCP)
+[![Open in VS Code](https://img.shields.io/badge/Open%20in-VS%20Code-007ACC?style=flat&logo=visualstudiocode)](https://vscode.dev/github/nsmaassel/HelloMCP)
+[![.NET 8.0](https://img.shields.io/badge/.NET-8.0-512BD4?style=flat&logo=dotnet)](https://dotnet.microsoft.com/download)
+
 This folder contains a .NET implementation of the Model Context Protocol (MCP) server, which enables applications to communicate with AI models using a standardized protocol.
 
 ## Features
