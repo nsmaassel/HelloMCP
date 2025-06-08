@@ -1,7 +1,15 @@
 {
-    "servers": {
-        "my-dotnot-mcp-server": {
-            "url": "http://localhost:5090/v1"
-        }
+  "servers": {
+    "mcp-server-docker": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-v",
+        "/var/run/docker.sock:/var/run/docker.sock",
+        "mcp-server-docker:latest"
+      ]
     }
+  }
 }
