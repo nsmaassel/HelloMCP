@@ -1,0 +1,32 @@
+{
+  "name": "docker-mcp",
+  "version": "1.0.0",
+  "description": "Docker-based Model Context Protocol (MCP) server implementation",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "test": "jest",
+    "lint": "eslint ."
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "docker",
+    "ai"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "uuid": "^9.0.1",
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.54.0",
+    "jest": "^29.7.0",
+    "nodemon": "^3.0.1",
+    "supertest": "^6.3.3"
+  }
+}
