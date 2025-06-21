@@ -1,0 +1,23 @@
+services:
+  mcp-server:
+    build:
+      context: ..  # Build from parent directory to access dotnet-mcp
+      dockerfile: docker-mcp/Dockerfile
+    container_name: hellomcp-docker-dev
+    ports:
+      - "5090:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - MCP_AUTH_ENABLED=false
+      - MCP_OAUTH_ISSUER=http://localhost:5090
+    volumes:
+      # Mount source code for development hot-reload
+      - ../dotnet-mcp/McpServer:/app/watch:ro
+    restart: "no"
+    networks:
+      - mcp-network
+
+networks:
+  mcp-network:
+    driver: bridge

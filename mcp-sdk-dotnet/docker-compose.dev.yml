@@ -1,0 +1,33 @@
+services:
+  mcp-sdk-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mcp-sdk-server-dev
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - DOTNET_RUNNING_IN_CONTAINER=true
+    volumes:
+      - .:/app/src:ro  # Mount source for development
+      - mcp-sdk-logs:/app/logs
+    networks:
+      - mcp-sdk-network
+    develop:
+      watch:
+        - action: rebuild
+          path: .
+          ignore:
+            - bin/
+            - obj/
+            - logs/
+    labels:
+      - "com.example.description=MCP SDK .NET Server (Development)"
+      - "com.example.version=1.0.0-dev"
+
+volumes:
+  mcp-sdk-logs:
+    driver: local
+
+networks:
+  mcp-sdk-network:
+    driver: bridge

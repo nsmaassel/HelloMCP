@@ -1,0 +1,31 @@
+services:
+  mcp-sdk-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mcp-sdk-server
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - DOTNET_RUNNING_IN_CONTAINER=true
+    volumes:
+      - mcp-sdk-logs:/app/logs
+    networks:
+      - mcp-sdk-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "echo", "MCP SDK Server running"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "com.example.description=MCP SDK .NET Server"
+      - "com.example.version=1.0.0"
+
+volumes:
+  mcp-sdk-logs:
+    driver: local
+
+networks:
+  mcp-sdk-network:
+    driver: bridge

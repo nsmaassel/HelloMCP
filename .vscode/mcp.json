@@ -1,15 +1,29 @@
 {
   "servers": {
+    "dotnet-mcp-server": {
+      "url": "http://localhost:5090/v1"
+    },
     "mcp-server-docker": {
       "command": "docker",
       "args": [
         "run",
         "-i",
         "--rm",
-        "-v",
-        "/var/run/docker.sock:/var/run/docker.sock",
-        "mcp-server-docker:latest"
+        "-p",
+        "5090:80",
+        "hellomcp-docker:latest"
       ]
-    }
+    },
+    "DotNet MCP SDK": {
+      "command": "dotnet",
+      "args": [
+        "run",
+        "--project",
+        "c:\\Workspace\\AI\\MCPs\\HelloMCP\\mcp-sdk-dotnet"
+      ],
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
   }
 }

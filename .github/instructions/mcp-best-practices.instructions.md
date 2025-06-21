@@ -1,3 +1,6 @@
+---
+applyTo: '**'
+---
 # Copilot Coding Agent Setup Instructions for HelloMCP
 
 This document provides best practices and workflow guidelines for using GitHub Copilot Coding Agent with the HelloMCP project. It is based on:
