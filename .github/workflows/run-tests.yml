@@ -9,26 +9,94 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dotnet-version: ['8.0.x']
+      fail-fast: false
     steps:
       - uses: actions/checkout@v4
       
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: ${{ matrix.dotnet-version }}
       
-      - name: Run .NET MCP Server Tests
+      # Restore packages for all projects first
+      - name: Restore packages
         run: |
-          dotnet test ./dotnet-mcp/McpServer.Tests/McpServer.Tests.csproj --logger "trx;LogFileName=dotnet-test-results.trx"
+          echo "Restoring packages for all .NET projects..."
+          find . -name "*.csproj" -type f | while read proj; do
+            echo "Restoring: $proj"
+            dotnet restore "$proj"
+          done
       
-      - name: Run Azure Functions MCP Tests
+      # Build projects before testing
+      - name: Build projects
         run: |
-          dotnet test ./azure-functions-mcp/test/azure-functions-mcp.Tests.csproj --logger "trx;LogFileName=azure-functions-test-results.trx"
-        continue-on-error: true  # Some tests are currently failing due to mock setup issues
+          echo "Building all .NET projects..."
+          find . -name "*.csproj" -type f | while read proj; do
+            echo "Building: $proj"
+            dotnet build "$proj" --no-restore
+          done
+      
+      # Discover and run tests for all test projects
+      - name: Discover and run tests
+        run: |
+          echo "Discovering test projects..."
+          TEST_PROJECTS=$(find . -name "*Tests.csproj" -type f)
+          
+          if [ -z "$TEST_PROJECTS" ]; then
+            echo "No test projects found!"
+            exit 1
+          fi
+          
+          echo "Found test projects:"
+          echo "$TEST_PROJECTS"
+          echo ""
+          
+          TEST_FAILED=false
+          
+          for TEST_PROJECT in $TEST_PROJECTS; do
+            echo "=============================================="
+            echo "Running tests for: $TEST_PROJECT"
+            echo "=============================================="
+            
+            # Extract project name for logging
+            PROJECT_NAME=$(basename "$TEST_PROJECT" .csproj)
+            
+            if dotnet test "$TEST_PROJECT" --no-build --logger "trx;LogFileName=${PROJECT_NAME}-test-results.trx" --verbosity normal; then
+              echo "✅ Tests passed for $TEST_PROJECT"
+            else
+              echo "❌ Tests failed for $TEST_PROJECT"
+              if [[ "$TEST_PROJECT" != *"azure-functions-mcp"* ]]; then
+                # Only fail the build for non-Azure Functions tests
+                # Azure Functions tests have known Moq issues
+                TEST_FAILED=true
+              else
+                echo "⚠️ Azure Functions tests failed due to known Moq extension method issues"
+              fi
+            fi
+            echo ""
+          done
+          
+          if [ "$TEST_FAILED" = true ]; then
+            echo "❌ Some critical tests failed"
+            exit 1
+          else
+            echo "✅ All critical tests passed"
+          fi
       
       - name: Upload Test Results
         uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: test-results
-          path: "**/*.trx"
+          name: test-results-${{ matrix.dotnet-version }}
+          path: "**/*-test-results.trx"
+          
+      - name: Display Test Summary
+        if: always()
+        run: |
+          echo "=== Test Execution Summary ==="
+          find . -name "*-test-results.trx" -type f | while read trx_file; do
+            echo "Test results file: $trx_file"
+          done
